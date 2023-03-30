@@ -1,35 +1,29 @@
 <script>
-import {isLoggedIn} from "../Store/authState.js";
-    import Gallery from "./Gallery.svelte";
+  import { isLoggedIn } from "../Store/authState.js";
+  import Gallery from "./Gallery.svelte";
+import {onMount} from "svelte"
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  import LoginScreen from "./LoginScreen.svelte";
+  const auth = getAuth();
+ </script>
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-    import LoginScreen from "./LoginScreen.svelte";
-const auth = getAuth();
- onAuthStateChanged(auth, (user) => {
-  if (user) {
-$isLoggedIn = true;
-
-    const uid = user.uid;
-    // ...
-  } else {
-
-$isLoggedIn = false;
-    // User is signed out
-    // ...
-  }
-});
-
-</script>
-
-
-<div>
-{#if $isLoggedIn ==null}
-<h1>Loading..</h1>
-{:else if $isLoggedIn }
-<Gallery/>
-{:else}
-<LoginScreen/>
-{/if}
+<div class="main_div" >
+ 
+  {#if $isLoggedIn}
+    <Gallery />
+  {:else}
+    <LoginScreen />
+  {/if}
 </div>
 
+
+<style>
+.main_div{
+	width:100vw;
+	height:100vh;
+	position: relative;
+
+
+}
+</style>
 
