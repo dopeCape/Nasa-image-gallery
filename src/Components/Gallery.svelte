@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
  import { onMount } from "svelte";
 import axios from "axios";
 let  image_url ="";
-const NASA_KEY = "FSa8WroEmfaKViljODibdP2KzPCg7pXVTzfxUe5j";
+const NASA_KEY = import.meta.env.NASA_KEY;
 const logMeOfDaddy =()=>{
 
 $username ="";

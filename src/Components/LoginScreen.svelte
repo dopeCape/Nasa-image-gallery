@@ -9,7 +9,7 @@ import {fade} from "svelte/transition"
     signInWithPopup,
   } from "firebase/auth";
   import axios from "axios";
-  import { username } from "../Store/authState.js";
+  import { username ,isLoggedIn} from "../Store/authState.js";
     import { onMount } from "svelte";
   let email = "";
   let muted = false;
@@ -116,7 +116,6 @@ onMount(()=>{
             .catch(console.log)
             .then((data) => {
               $username = data.data.username;
-
 	    phrases = [`Welcome ${data.data.username}`,"Image is loading..."]
             });
         })
@@ -210,6 +209,8 @@ onMount(()=>{
           .then((data) => {
             $username = data.data.username;
 	    phrases = [`Welcome ${data.data.username}`,"Image is loading..."]
+	    setTimeout(()=>{$isLoggedIn =true
+	    console.log("should start now" )},1500)
           });
 
         // IdP data available using getAdditionalUserInfo(result)
