@@ -21,6 +21,9 @@ import {onMount} from "svelte"
 .main_div{
 	width:100vw;
 	height:100vh;
+	max-height: 100vh;
+	max-width:100vw;
+	overflow:hidden;
 	position: relative;
 
 

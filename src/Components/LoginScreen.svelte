@@ -1,5 +1,5 @@
 <script>
-import {fade} from "svelte/transition"
+  import { fade } from "svelte/transition";
   import { auth } from "../firebase.js";
   import {
     getAuth,
@@ -8,99 +8,127 @@ import {fade} from "svelte/transition"
     GoogleAuthProvider,
     signInWithPopup,
   } from "firebase/auth";
+  let f ="";
+
   import axios from "axios";
-  import { username ,isLoggedIn} from "../Store/authState.js";
-    import { onMount } from "svelte";
+  import { username,isLoggedIn } from "../Store/authState.js";
+  import { onMount } from "svelte";
+  const facts =["NASA was founded on July 29,1958 in the United States.",
+"It officially opened for business on October 1, 1958."
+,"the Soviets launched the world’s first artificial satellite Sputnik 1 a year before that."
+,"NASA has 9 centers, 7 test and research facilities, and the Jet Propulsion Laboratory.", 
+"Over 17,000 people work for NASA"]
+  let loded = false;
   let email = "";
   let muted = false;
-
+let toRen = true;
   let onSignUp = false;
   let emailPlace = "Email";
   let password = "";
   let passwordPlace = "Password";
   let conPass = "";
   let conPassPlace = "Confirm Password";
-class TextScramble {
-		constructor(el) {
-			this.el = el;
-			this.chars = '!<>-_\\/[]{}—=+*^?#________';
-			this.update = this.update.bind(this);
-		}
-		setText(newText) {
-			const oldText = this.el.innerText;
-			const length = Math.max(oldText.length, newText.length);
-			const promise = new Promise((resolve) => (this.resolve = resolve));
-			this.queue = [];
-			for (let i = 0; i < length; i++) {
-				const from = oldText[i] || '';
-				const to = newText[i] || '';
-				const start = Math.floor(Math.random() * 40);
-				const end = start + Math.floor(Math.random() * 40);
-				this.queue.push({ from, to, start, end });
-			}
-			cancelAnimationFrame(this.frameRequest);
-			this.frame = 0;
-			this.update();
-			return promise;
-		}
-		update() {
-			let output = '';
-			let complete = 0;
-			for (let i = 0, n = this.queue.length; i < n; i++) {
-				let { from, to, start, end, char } = this.queue[i];
-				if (this.frame >= end) {
-					complete++;
-					output += to;
-				} else if (this.frame >= start) {
-					if (!char || Math.random() < 0.28) {
-						char = this.randomChar();
-						this.queue[i].char = char;
-					}
-					output += `<span style= >${char}</span>`;
-				} else {
-					output += from;
-				}
-			}
-			this.el.innerHTML = output;
-			if (complete === this.queue.length) {
-				this.resolve();
-			} else {
-				this.frameRequest = requestAnimationFrame(this.update);
-				this.frame++;
-			}
-		}
-		randomChar() {
-			return this.chars[Math.floor(Math.random() * this.chars.length)];
-		}
-	}
-let TextLoaded = false;
-let phrases = [
-			'Login to Continue',
-			"Or SignUp to continue"
+  onMount(()=>{
+  let el =document.getElementById("bar")
+  let vid =document.getElementById("video") 
+  let id = null
+f=facts[Math.floor(Math.random()*(facts.length))]
+  vid.style.visibility = "hidden"
 
 
+  vid.muted=true;
+  let pos = 0;
+  id = setInterval(()=>{
+  if(pos ==100){
+clearInterval(id)
+  vid.style.visibility = "visible"
+
+  vid.muted=false;
+  
+  vid.play()
 
 
-		];
-onMount(()=>{
+loded=true;
+  }else{
+  pos= pos+1;
+el.style.width = pos+"%";
+  }
+  },200)
 
-		const el = document.getElementById('text');
-		const fx = new TextScramble(el);
+  })
+  class TextScramble {
+    constructor(el) {
+      this.el = el;
+      this.chars = "!<>-_\\/[]{}—=+*^?#________";
+      this.update = this.update.bind(this);
+    }
+    setText(newText) {
+      const oldText = this.el.innerText;
+      const length = Math.max(oldText.length, newText.length);
+      const promise = new Promise((resolve) => (this.resolve = resolve));
+      this.queue = [];
+      for (let i = 0; i < length; i++) {
+        const from = oldText[i] || "";
+        const to = newText[i] || "";
+        const start = Math.floor(Math.random() * 40);
+        const end = start + Math.floor(Math.random() * 40);
+        this.queue.push({ from, to, start, end });
+      }
+      cancelAnimationFrame(this.frameRequest);
+      this.frame = 0;
+      this.update();
+      return promise;
+    }
+    update() {
+      let output = "";
+      let complete = 0;
+      for (let i = 0, n = this.queue.length; i < n; i++) {
+        let { from, to, start, end, char } = this.queue[i];
+        if (this.frame >= end) {
+          complete++;
+          output += to;
+        } else if (this.frame >= start) {
+          if (!char || Math.random() < 0.28) {
+            char = this.randomChar();
+            this.queue[i].char = char;
+          }
+          output += `<span style= >${char}</span>`;
+        } else {
+          output += from;
+        }
+      }
+      this.el.innerHTML = output;
+      if (complete === this.queue.length) {
+        this.resolve();
+      } else {
+        this.frameRequest = requestAnimationFrame(this.update);
+        this.frame++;
+      }
+    }
+    randomChar() {
+      return this.chars[Math.floor(Math.random() * this.chars.length)];
+    }
+  }
+  let TextLoaded = false;
+  let phrases = ["Login to Continue", "Or SignUp to continue"];
 
-		let counter = 0;
-		const next = () => {
-			if (counter == phrases.length) {
+    $:{if(loded){
+    setTimeout(()=>{ const el = document.getElementById("text");
+    const fx = new TextScramble(el);
 
-			}
-			fx.setText(phrases[counter]).then(() => {
-				setTimeout(next, 1800);
-			});
-			counter = (counter + 1)%phrases.length;
-		};
+    let counter = 0;
+    const next = () => {
+      if (counter == phrases.length) {
+      }
+      fx.setText(phrases[counter]).then(() => {
+        setTimeout(next, 1800);
+      });
+      counter = (counter + 1) % phrases.length;
+    };
 
-		next();
-
-})
+    next();
+},200)
+     }}
   const handleSignUp = async () => {
     console.log(conPass, password);
     if (conPass == password) {
@@ -115,8 +143,17 @@ onMount(()=>{
             })
             .catch(console.log)
             .then((data) => {
+
+	    toRen=false;
               $username = data.data.username;
-	    phrases = [`Welcome ${data.data.username}`,"Image is loading..."]
+   setTimeout(()=>{
+	    $isLoggedIn = true;
+
+	    },7000)
+              phrases = [
+                `Welcome ${data.data.username}`,
+                "Image is loading...",
+              ];
             });
         })
         .catch((error) => {
@@ -153,10 +190,17 @@ onMount(()=>{
           axios
             .get(`http://localhost:8000/user/${user.user.uid}`)
             .then((data) => {
-              console.log(data);
-              $username = data.data.username;
 
-	    phrases = [`Welcome ${data.data.username}`,"Image is loading..."]
+	    toRen=false;
+              $username = data.data.username;
+   setTimeout(()=>{
+	    $isLoggedIn = true;
+
+	    },7000)
+            phrases = [
+                `Welcome ${data.data.username}`,
+                "Image is loading...",
+              ];
             });
         })
         .catch((error) => {
@@ -208,9 +252,12 @@ onMount(()=>{
           .catch(console.log)
           .then((data) => {
             $username = data.data.username;
-	    phrases = [`Welcome ${data.data.username}`,"Image is loading..."]
-	    setTimeout(()=>{$isLoggedIn =true
-	    console.log("should start now" )},1500)
+	    toRen=false;
+	    setTimeout(()=>{
+	    $isLoggedIn = true;
+
+	    },7000)
+            phrases = [`Welcome ${data.data.username}`, "Image is loading..."];
           });
 
         // IdP data available using getAdditionalUserInfo(result)
@@ -239,98 +286,162 @@ onMount(()=>{
 </script>
 
 <div class="main_login">
-  <video class="back" autoplay loop id="video">
-    <source
-      class="back"
-      src="https://storage.googleapis.com/qwert-41c55.appspot.com/backgournd.mp4"
-    />
-  </video>
-  {#if onSignUp}
-    <div class="signup" in:fade={{duration:700,delay:400}} out:fade={{duration:400}}>
-      <input
-        type="email inp"
-        class="inp"
-        bind:value={email}
-        placeholder={emailPlace}
+<video class="back" autoplay loop id="video" >
+      <source
+        class="back"
+        src="https://storage.googleapis.com/qwert-41c55.appspot.com/backgournd.mp4?{Math.random()}"
       />
-      <input
-        type="text inp"
-        class="inp"
-        bind:value={password}
-        placeholder={passwordPlace}
-      />
+    </video>
+  {#if !loded}
+    <div class="center">
+ <div class="facts">
 
-      <input
-        type="text inp"
-        class="inp"
-        bind:value={conPass}
-        placeholder={conPassPlace}
-      />
-      <div class="sign_btn">
-        <button class="signup_button btn" on:click={handleSignUp}>Signup</button
-        >
- <button class="g_auth" on:click={handleGAuth}
-          ><i class="fa-brands fa-google" /></button
-        >
-
-             </div>
-        <p class="go_to_signup" on:click={handleBackToLogin}
-          >Have a account?<span class="signup_link">Login</span></p
-        >
-
+{f}
+    </div>
+    <div class="loading_div">
+      <div class="loading_bar" id ="bar"/>
+    </div>
 
     </div>
+   
   {:else}
-    <div class="login" in:fade={{duration:700,delay:400}} out:fade={{duration:400}}>
-      <input
-        type="email "
-        class="inp"
-        bind:value={email}
-        placeholder={emailPlace}
-      />
-      <input
-        type="text "
-        class="inp"
-        bind:value={password}
-        placeholder={passwordPlace}
-      />
-      <div class="login_btn">
-        <button class="login_button btn" on:click={handleLogin}>Login</button>
-        <button class="g_auth" on:click={handleGAuth}
-          ><i class="fa-brands fa-google" /></button
-        >
+    
+    {#if toRen}
+    {#if onSignUp}
+      <div
+        class="signup"
+        in:fade={{ duration: 700, delay: 400 }}
+        out:fade={{ duration: 400 }}
+      >
+        <input
+          type="email inp"
+          class="inp"
+          bind:value={email}
+          placeholder={emailPlace}
+        />
+        <input
+          type="text inp"
+          class="inp"
+          bind:value={password}
+          placeholder={passwordPlace}
+        />
+
+        <input
+          type="text inp"
+          class="inp"
+          bind:value={conPass}
+          placeholder={conPassPlace}
+        />
+        <div class="sign_btn">
+          <button class="signup_button btn" on:click={handleSignUp}
+            >Signup</button
+          >
+          <button class="g_auth" on:click={handleGAuth}
+            ><i class="fa-brands fa-google" /></button
+          >
+        </div>
+        <p class="go_to_signup" on:click={handleBackToLogin}>
+          Have a account?<span class="signup_link">Login</span>
+        </p>
       </div>
-      <p class="go_to_signup">
-        New here?<span class="signup_link" on:click={handleGoToSignUp}
-          >Create account</span
-        >
-      </p>
-    </div>
+    {:else}
+      <div
+        class="login"
+        in:fade={{ duration: 700, delay: 400 }}
+        out:fade={{ duration: 400 }}
+      >
+        <input
+          type="email "
+          class="inp"
+          bind:value={email}
+          placeholder={emailPlace}
+        />
+        <input
+          type="text "
+          class="inp"
+          bind:value={password}
+          placeholder={passwordPlace}
+        />
+        <div class="login_btn">
+          <button class="login_button btn" on:click={handleLogin}>Login</button>
+          <button class="g_auth" on:click={handleGAuth}
+            ><i class="fa-brands fa-google" /></button
+          >
+        </div>
+        <p class="go_to_signup">
+          New here?<span class="signup_link" on:click={handleGoToSignUp}
+            >Create account</span
+          >
+        </p>
+      </div>
+
   {/if}
-  <button class="mute" on:click={mute}>
-    {#if muted}<i class="fa-solid fa-volume-xmark" />{:else}<i
-        class="fa-solid fa-volume-high"
-      />{/if}
-  </button>
-  <div class="center_text" id="text">
-  JUST A TEXT BOX
-  </div>
+    {/if}
+    <button class="mute" on:click={mute}>
+      {#if muted}<i class="fa-solid fa-volume-xmark" />{:else}<i
+          class="fa-solid fa-volume-high"
+        />{/if}
+    </button>
+    <div class="center_text" id="text">JUST A TEXT BOX</div>
+  {/if}
+
 </div>
 
 <style>
-.center_text{
-position:absolute ;
-font-weight: 900;
+.center{
+display:flex;
+position: absolute;
+width:100%;
+height:100%;
+align-content: center;
+justify-content: center;
+flex-wrap: wrap;
+flex-direction: column;;
 
-top:40%;
-color:rgba(210,230,240,1);
-font-size:4.5rem;
 
-left:40%;
 }
+.facts{
+color:whitesmoke;
+max-width:40%;
+text-align:center;
+
+
+
+}
+  .loading_bar{
+  transition: width 200ms linear;
+
+  padding: 0px;
+  position: absolute;
+  background:white;
+  height: 100%;
+
+  }
+  .loading_div {
+    width: 40%;
+    margin-top:20px;
+    position: relative;
+
+
+
+
+    height: 10px;
+    z-index: 1;
+    border: 1px solid white;
+  }
+  .center_text {
+    position: absolute;
+    font-weight: 900;
+
+    top: 40%;
+    color: rgba(210, 230, 240, 1);
+    font-size: 4.5rem;
+
+    left: 30%;
+  }
   .go_to_signup {
     color: white;
-    margin-left: 50px;
+    margin-left: 1%;
 
     cursor: default;
   }
@@ -345,18 +456,14 @@ left:40%;
     cursor: pointer;
     margin-left: 9px;
     color: darkgray;
-
   }
- .g_auth:hove{
-
-background: rgba(10,10,10,0.9);
- }
- .btn:hover{
- 
-
-background: rgba(10,10,10,0.9);
- }
- .sign_btn {
+  .g_auth:hove {
+    background: rgba(10, 10, 10, 0.9);
+  }
+  .btn:hover {
+    background: rgba(10, 10, 10, 0.9);
+  }
+  .sign_btn {
     display: flex;
 
     font-weight: 900;
@@ -423,6 +530,7 @@ background: rgba(10,10,10,0.9);
     width: 100%;
     height: 100%;
     object-fit: cover;
+    background: black;
   }
   .back {
     position: absolute;
@@ -446,12 +554,12 @@ background: rgba(10,10,10,0.9);
 
   .btn {
     padding: 10px;
-width: 100%;
+    width: 100%;
     margin-right: 5px;
 
     color: white;
 
-cursor: pointer;
+    cursor: pointer;
     background: space;
     margin-top: 10px;
     outline: none;
