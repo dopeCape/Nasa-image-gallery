@@ -8,14 +8,17 @@
     GoogleAuthProvider,
     signInWithPopup,
   } from "firebase/auth";
+
   let f ="";
+
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   import axios from "axios";
   import { username,isLoggedIn } from "../Store/authState.js";
   import { onMount } from "svelte";
   const facts =["NASA was founded on July 29,1958 in the United States.",
-"It officially opened for business on October 1, 1958."
-,"the Soviets launched the world’s first artificial satellite Sputnik 1 a year before that."
+"NASA officially opened for business on October 1, 1958."
+,"the Soviets launched the world’s first artificial satellite Sputnik 1 a year before NASA."
 ,"NASA has 9 centers, 7 test and research facilities, and the Jet Propulsion Laboratory.", 
 "Over 17,000 people work for NASA"]
   let loded = false;
@@ -137,7 +140,7 @@ el.style.width = pos+"%";
           const uid = user.user.uid;
           const email = user.user.email;
           await axios
-            .post("http://localhost:8000/users/create", {
+            .post(BACKEND_URL+"/users/create", {
               email: email,
               uid: uid,
             })
@@ -188,7 +191,7 @@ el.style.width = pos+"%";
       signInWithEmailAndPassword(auth, email, password)
         .then((user) => {
           axios
-            .get(`http://localhost:8000/user/${user.user.uid}`)
+            .get(BACKEND_URL+`/user/${user.user.uid}`)
             .then((data) => {
 
 	    toRen=false;
@@ -245,7 +248,7 @@ el.style.width = pos+"%";
         const user = result.user;
 
         await axios
-          .post("http://localhost:8000/users/create", {
+          .post(BACKEND_URL+"/users/create", {
             email: user.email,
             uid: user.uid,
           })
